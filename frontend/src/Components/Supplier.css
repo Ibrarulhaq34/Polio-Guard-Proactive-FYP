@@ -1,0 +1,30 @@
+.container {
+  background-color: white; /* White background for the entire container */
+  padding: 20px;
+}
+
+.table {
+  width: 100%; /* Full width of the table */
+  border-collapse: collapse; /* Remove spacing between table cells */
+}
+
+.table th, .table td {
+  border: 1px solid #ddd; /* Light border for table cells */
+  padding: 8px; /* Padding inside table cells */
+}
+
+.button {
+  background-color: #00008B; /* Dark blue color for buttons */
+  color: white; /* White text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.input {
+  padding: 10px;
+  margin: 5px 0;
+  width: calc(100% - 22px); /* Full width minus padding */
+}

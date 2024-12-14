@@ -1,0 +1,41 @@
+.container {
+    background-color: #ADD8E6; /* Light blue color */
+    height: 100vh;
+    padding: 20px;
+  }
+  
+  .button {
+    background-color: #00008B; /* Dark blue color */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .table th {
+    background-color: #00008B;
+    color: white;
+  }
+  
+  .input {
+    background-color: #ADD8E6; /* Light blue color */
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #00008B; /* Optional: Dark blue border */
+    border-radius: 5px;
+  }
+  

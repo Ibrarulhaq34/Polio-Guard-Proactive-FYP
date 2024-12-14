@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chartjs-chart-box-and-violin-plot": "^4.0.0",
+    "mongodb": "^6.8.0"
+  }
+}
