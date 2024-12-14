@@ -64,7 +64,7 @@ const AdminPage = () => {
       .catch(error => console.error('Error fetching data:', error));
 
     // Fetch forecast data for 2025
-    fetch('http://localhost:2000/predict')  
+    fetch('https://fyp-xd25.vercel.app/predict')  
       .then(response => response.json())
       .then(forecast => {
         setForecastData(forecast);  
