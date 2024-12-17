@@ -16,6 +16,8 @@ const workerRoutes = require('./routes/workerRoutes');
 const clientPost = require('./routes/clientPost');
 
 
+const alerts = require('./routes/alerts');
+
 const post = require('./routes/postRoutes');
 
 const fs = require('fs');
@@ -51,6 +53,8 @@ app.use('/api',router)
 app.use('/api/posts', post)
 
 app.use('/api/clientPost', clientPost);
+
+app.use('/api/alerts', alerts);
 
 app.get('/api/data', (req, res) => {
     const results = [];

@@ -52,27 +52,7 @@ const CampaignList = () => {
     }
 
     
-    const taskData = campaign.tasks.map((task) => [
-      task.taskName,
-      task.status === 1 ? 'Done' : 'Pending',
-    ]);
-
-    
-    doc.setFontSize(12);
-    doc.text('Tasks:', 20, yOffset);
-    yOffset += 10;
-
-    taskData.forEach((task) => {
-      if (task[1] === 'Done') {
-        doc.setTextColor(0, 128, 0); 
-        doc.text(task[0], 20, yOffset);
-        doc.line(20, yOffset + 1, 180, yOffset + 1);
-      } else {
-        doc.setTextColor(255, 0, 0); 
-        doc.text(task[0], 20, yOffset);
-      }
-      yOffset += 10;
-    });
+  
 
    
     doc.save(`${campaign.name}_details.pdf`);

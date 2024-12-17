@@ -21,32 +21,40 @@ const CampaignList1 = () => {
   const handleTaskClick = (campaignId, taskName, currentStatus) => {
     const newStatus = currentStatus === 0 ? 1 : 0;
 
-    axios.put(`http://localhost:2000/api/update-task-status/${campaignId}/${taskName}`)
-      .then(res => {
+    axios
+      .put(`http://localhost:2000/api/update-task-status/${campaignId}/${taskName}`)
+      .then((res) => {
         const updatedCampaign = res.data.campaign;
 
-        setCampaigns(prevCampaigns =>
-          prevCampaigns.map(campaign =>
+        setCampaigns((prevCampaigns) =>
+          prevCampaigns.map((campaign) =>
             campaign._id === updatedCampaign._id
-              ? { ...updatedCampaign }
+              ? {
+                ...campaign,
+                tasks: updatedCampaign.tasks, // Update tasks
+                // Retain original geofences and inventories
+                geofences: campaign.geofences,
+                inventories: campaign.inventories,
+              }
               : campaign
           )
         );
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
       });
   };
 
   const handleDeleteCampaign = (campaignId) => {
-    axios.delete(`http://localhost:2000/api/delete-campaign/${campaignId}`)
+    axios
+      .delete(`http://localhost:2000/api/delete-campaign/${campaignId}`)
       .then(() => {
-        setCampaigns(prevCampaigns =>
-          prevCampaigns.filter(campaign => campaign._id !== campaignId)
+        setCampaigns((prevCampaigns) =>
+          prevCampaigns.filter((campaign) => campaign._id !== campaignId)
         );
         alert('Campaign deleted successfully!');
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         alert('Failed to delete campaign.');
       });
@@ -55,17 +63,14 @@ const CampaignList1 = () => {
   const generatePDF = (campaign) => {
     const doc = new jsPDF();
 
-    // Title
     doc.setFontSize(18);
     doc.text('Campaign Details', 20, 20);
 
-    // Campaign Info
     doc.setFontSize(12);
     doc.text(`Name: ${campaign.name}`, 20, 30);
     doc.text(`Start Date: ${new Date(campaign.startDate).toLocaleDateString()}`, 20, 40);
     doc.text(`End Date: ${new Date(campaign.endDate).toLocaleDateString()}`, 20, 50);
 
-    // Associated Geofences
     doc.setFontSize(12);
     doc.text('Associated Geofences:', 20, 60);
     let yOffset = 70;
@@ -85,30 +90,27 @@ const CampaignList1 = () => {
       yOffset += 10;
     }
 
-    // Tasks (manual way without `jspdf-autotable`)
     const taskData = campaign.tasks.map((task) => [
       task.taskName,
       task.status === 1 ? 'Done' : 'Pending',
     ]);
 
-    // Tasks Heading
     doc.setFontSize(12);
     doc.text('Tasks:', 20, yOffset);
     yOffset += 10;
 
     taskData.forEach((task) => {
       if (task[1] === 'Done') {
-        doc.setTextColor(0, 128, 0); // Green for done
+        doc.setTextColor(0, 128, 0);
         doc.text(task[0], 20, yOffset);
-        doc.line(20, yOffset + 1, 180, yOffset + 1); // Line through the task name
+        doc.line(20, yOffset + 1, 180, yOffset + 1);
       } else {
-        doc.setTextColor(255, 0, 0); // Red for pending
+        doc.setTextColor(255, 0, 0);
         doc.text(task[0], 20, yOffset);
       }
       yOffset += 10;
     });
 
-    // Save PDF
     doc.save(`${campaign.name}_details.pdf`);
   };
 
@@ -131,20 +133,42 @@ const CampaignList1 = () => {
     headerText: { fontSize: '22px', margin: 0 },
     campaignList: { listStyleType: 'none', padding: 0 },
     campaignItem: {
-      border: '1px solid #ccc',
-      borderRadius: '10px',
+      border: '2px solid #FF7518', // Orange border
+      borderRadius: '10px', // Optional: for rounded corners
       padding: '20px',
       marginBottom: '20px',
     },
     campaignTitle: { fontSize: '20px', fontWeight: 'bold', marginBottom: '10px' },
     subHeader: { fontSize: '16px', fontWeight: 'bold', margin: '10px 0' },
     taskItem: { cursor: 'pointer', marginBottom: '5px' },
+    taskContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: '10px',
+    },
+    taskColumn: {
+      width: '45%',
+    },
+    geofences: {
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      padding: '10px',
+      marginTop: '10px',
+      backgroundColor: '#f9f9f9',
+    },
+    inventories: {
+      border: '1px solid #ccc',
+      borderRadius: '8px',
+      padding: '10px',
+      marginTop: '10px',
+      backgroundColor: '#ffffff',
+    },
     PDF: {
       backgroundColor: 'rgb(0, 51, 102)',
       color: 'white',
       padding: '10px 20px',
-      border: 'none',
-      borderRadius: '5px',
+      border: '2px solid #FF7518', // Orange border
+      borderRadius: '10px', // Optional: for rounded corners
       cursor: 'pointer',
       fontSize: '14px',
       marginRight: '10px',
@@ -153,8 +177,8 @@ const CampaignList1 = () => {
       backgroundColor: 'rgb(0, 51, 102)',
       color: 'white',
       padding: '10px 20px',
-      border: 'none',
-      borderRadius: '5px',
+      border: '2px solid #FF7518', // Orange border
+      borderRadius: '10px', // Optional: for rounded corners
       cursor: 'pointer',
       marginTop: '20px',
       fontSize: '16px',
@@ -166,8 +190,6 @@ const CampaignList1 = () => {
       <div style={styles.header}>
         <h1 style={styles.headerText}>All Campaigns</h1>
       </div>
-
-      
 
       {campaigns.length > 0 ? (
         <ul style={styles.campaignList}>
@@ -186,13 +208,12 @@ const CampaignList1 = () => {
               datasets: [
                 {
                   data: [taskStats.done, taskStats.pending],
-                  backgroundColor: ['#28a745', '#ffc107'],
-                  hoverBackgroundColor: ['#218838', '#e0a800'],
+                  backgroundColor: ['#28a745', '#ff0000'],
+                  hoverBackgroundColor: ['#218838', '#cc0000'],
                 },
               ],
             };
 
-            // Check if all tasks are done
             const allTasksDone = campaign.tasks.every(task => task.status === 1);
 
             return (
@@ -202,33 +223,31 @@ const CampaignList1 = () => {
                 <p>End Date: {new Date(campaign.endDate).toLocaleDateString()}</p>
 
                 <h4 style={styles.subHeader}>Associated Geofences:</h4>
-                <ul style={{ listStyleType: 'none', padding: '0' }}>
+                <div style={styles.geofences}>
                   {campaign.geofences && campaign.geofences.length > 0 ? (
                     campaign.geofences.map(geofence => (
-                      <li key={geofence._id}>
-                        {geofence.parentId && geofence.parentId.name
-                          ? geofence.parentId.name
-                          : 'Unknown Geofence'}
-                      </li>
+                      <p key={geofence._id}>
+                        {geofence.parentId?.name || 'Unknown Geofence'}
+                      </p>
                     ))
                   ) : (
-                    <li>No Geofences Associated</li>
+                    <p>No Geofences Associated</p>
                   )}
-                </ul>
+                </div>
 
                 <h4 style={styles.subHeader}>Inventory:</h4>
-                <ul style={{ listStyleType: 'none', padding: '0' }}>
+                <div style={styles.inventories}>
                   {campaign.inventories && campaign.inventories.length > 0 ? (
                     campaign.inventories.map(inv => (
-                      <li key={inv.inventoryId?._id} style={styles.inventoryItem}>
-                        Inventory Name: {inv.inventoryId?.name || 'Unknown Inventory'} -
+                      <p key={inv.inventoryId?._id}>
+                        {inv.inventoryId?.name || 'Unknown Inventory'} -{' '}
                         Available: {inv.inventoryId?.quantity || 'Unknown Quantity'}
-                      </li>
+                      </p>
                     ))
                   ) : (
-                    <li>No Inventory Used</li>
+                    <p>No Inventory Used</p>
                   )}
-                </ul>
+                </div>
 
                 <h4 style={styles.subHeader}>Task Breakdown</h4>
                 <div style={{ width: '200px', height: '200px', margin: '0 auto' }}>
@@ -236,21 +255,51 @@ const CampaignList1 = () => {
                 </div>
 
                 <h4 style={styles.subHeader}>Tasks</h4>
-                <ul style={{ listStyleType: 'none', padding: '0' }}>
-                  {campaign.tasks.map((task, index) => (
-                    <li
-                      key={index}
-                      style={{
-                        ...styles.taskItem,
-                        textDecoration: task.status === 1 ? 'line-through' : 'none',
-                        color: task.status === 1 ? 'green' : 'red',
-                      }}
-                      onClick={() => handleTaskClick(campaign._id, task.taskName, task.status)}
-                    >
-                      {task.taskName}
-                    </li>
-                  ))}
-                </ul>
+                <div style={styles.taskContainer}>
+                  <div style={styles.taskColumn}>
+                    <h5>Pending Tasks</h5>
+                    <ul style={{ listStyleType: 'none', padding: '0' }}>
+                      {campaign.tasks
+                        .filter(task => task.status === 0)
+                        .map((task, index) => (
+                          <li
+                            key={index}
+                            style={{
+                              ...styles.taskItem,
+                              color: 'red',
+                            }}
+                            onClick={() =>
+                              handleTaskClick(campaign._id, task.taskName, task.status)
+                            }
+                          >
+                            {task.taskName}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                  <div style={styles.taskColumn}>
+                    <h5>Completed Tasks</h5>
+                    <ul style={{ listStyleType: 'none', padding: '0' }}>
+                      {campaign.tasks
+                        .filter(task => task.status === 1)
+                        .map((task, index) => (
+                          <li
+                            key={index}
+                            style={{
+                              ...styles.taskItem,
+
+                              color: 'green',
+                            }}
+                            onClick={() =>
+                              handleTaskClick(campaign._id, task.taskName, task.status)
+                            }
+                          >
+                            {task.taskName}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                </div>
 
                 <button onClick={() => generatePDF(campaign)} style={styles.PDF}>
                   Generate PDF

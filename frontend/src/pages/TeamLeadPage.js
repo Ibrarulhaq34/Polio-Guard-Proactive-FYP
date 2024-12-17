@@ -8,8 +8,10 @@ import CreateCampaign1 from '../Components/CreateCampaign1';
 import CampaignList1 from '../Components/CampaignList1';
 import CampaignList from '../Components/CampaignList';
 import NextScreen from '../Components/NextScreen';
-import { FaFlag,FaHome, FaTasks ,FaMapMarkedAlt} from 'react-icons/fa';
+import { FaFlag,FaHome, FaTasks ,FaMapMarkedAlt,FaBell} from 'react-icons/fa';
 import Footer from '../Components/Footer';
+
+import ViewAlert from '../Components/ViewAlert';
 
 const TeamLeadPage = () => {
   const location = useLocation();
@@ -87,7 +89,9 @@ const TeamLeadPage = () => {
       case 'NextScreen':
         return <NextScreen />;
       case 'home':
-        return <Home/>
+        return <Home/>;
+        case 'ViewAlert':
+        return <ViewAlert/>
       default:
         return null;
     }
@@ -117,7 +121,7 @@ const TeamLeadPage = () => {
           }}
           onClick={() => setCurrentScreen('home')}
         ><FaMapMarkedAlt style={styles.icon} />
-          Manage Geogence
+          Manage Geofence
         </button>
         <button
           style={{
@@ -154,6 +158,15 @@ const TeamLeadPage = () => {
           onClick={() => setCurrentScreen('NextScreen')}
         >< FaTasks style={styles.icon} />
           Task Assignment 
+        </button>
+        <button
+          style={{
+            ...styles.button,
+            color: currentScreen === 'ViewAlert' ? '#FF7518' : 'white',
+          }}
+          onClick={() => setCurrentScreen('ViewAlert')}
+        >< FaBell style={styles.icon} />
+          View Alert
         </button>
       </div>
 

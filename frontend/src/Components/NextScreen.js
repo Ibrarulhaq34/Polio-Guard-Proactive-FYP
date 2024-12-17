@@ -80,6 +80,7 @@ const NextScreen = () => {
     })
       .then(() => {
         alert('Tasks updated successfully');
+        window.location.reload();
       })
       .catch(err => {
         console.error('Error updating campaign tasks:', err);
@@ -92,6 +93,7 @@ const NextScreen = () => {
       padding: '0px',
       width: '100%',
       backgroundColor: '#f8f9fa',
+      height: '100vh', // Fullscreen height
     },
     header: {
       backgroundColor: 'rgb(0, 51, 102)',
@@ -136,17 +138,27 @@ const NextScreen = () => {
       marginRight: 'auto',
       fontSize: '16px',
     },
-    matchedList: {
-      listStyleType: 'none',
-      padding: 0,
+    tableContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      padding: '20px',
     },
-    matchedItem: {
-      padding: '5px',
-      border: '1px solid #ccc',
-      borderRadius: '5px',
-      margin: '5px 0',
-      cursor: 'pointer',
+    table: {
+      borderCollapse: 'collapse',
+      width: '45%',
       backgroundColor: '#f0f8ff',
+      border: '2px solid #FF7518',
+    },
+    th: {
+      border: '1px solid #FF7518',
+      padding: '8px',
+      backgroundColor: 'rgb(0, 51, 102)',
+      color: 'white',
+    },
+    td: {
+      border: '1px solid #FF7518',
+      padding: '8px',
+      cursor: 'pointer',
     },
     selected: {
       backgroundColor: '#ADD8E6',
@@ -180,50 +192,64 @@ const NextScreen = () => {
       </div>
 
       {matchedAddresses.length > 0 && (
-        <>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Filter by Area</label>
-            <select
-              onChange={(e) => handleAreaSelect(e.target.value)}
-              style={styles.select}
-            >
-              <option value="">--Select Area--</option>
-              {[...new Set(matchedAddresses.map(address => {
-                const parts = address.split(", ");
-                return parts[parts.length - 2]; 
-              }))].map(area => (
-                <option key={area} value={area}>
-                  {area}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Matched Client Addresses</label>
-            <ul style={styles.matchedList}>
-              {filteredAddresses.map((address, index) => {
-                const alreadyAssigned = selectedCampaign.tasks.some(task => task.taskName === address);
-                return (
-                  <li
-                    key={index}
-                    style={{
-                      ...styles.matchedItem,
-                      ...(selectedAddresses.includes(address) ? styles.selected : {}),
-                    }}
-                    onClick={() => !alreadyAssigned && handleAddressSelect(address)}
-                  >
-                    {address}
-                    {alreadyAssigned && (
-                      <div style={styles.alreadyAssigned}>This task is already assigned</div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Filter by Area</label>
+          <select
+            onChange={(e) => handleAreaSelect(e.target.value)}
+            style={styles.select}
+          >
+            <option value="">--Select Area--</option>
+            {[...new Set(matchedAddresses.map(address => {
+              const parts = address.split(", ");
+              return parts[parts.length - 2];
+            }))].map(area => (
+              <option key={area} value={area}>
+                {area}
+              </option>
+            ))}
+          </select>
+        </div>
       )}
+
+      <div style={styles.tableContainer}>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Assigned Tasks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedCampaign && selectedCampaign.tasks.map((task, index) => (
+              <tr key={index}>
+                <td style={styles.td}>{task.taskName}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Available Tasks</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredAddresses.map((address, index) => {
+              const alreadyAssigned = selectedCampaign.tasks.some(task => task.taskName === address);
+              if (alreadyAssigned) return null;
+              return (
+                <tr
+                  key={index}
+                  style={selectedAddresses.includes(address) ? styles.selected : {}}
+                  onClick={() => handleAddressSelect(address)}
+                >
+                  <td style={styles.td}>{address}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
       {selectedAddresses.length > 0 && (
         <button style={styles.button} onClick={handleUpdateTasks}>

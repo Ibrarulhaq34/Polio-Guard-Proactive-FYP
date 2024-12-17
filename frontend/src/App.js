@@ -6,9 +6,9 @@ import Home from './Components/Home';
 import Footer from './Components/Footer';
 
 import AddGeoMap from './Components/AddGeoMap';
-
-
 import ViewAllMaps from './Components/ViewAllMaps';
+
+import ViewAlert from './Components/ViewAlert';
 
 
 import Home1 from './Components/Home1';
@@ -49,6 +49,8 @@ import PostViewForClient from './Components/PostViewForClient';
 import ViewAdverseReport from './Components/ViewAdverseReport';
 
 import ClientAdversePost from './Components/ClientAdversePost';
+
+
 
 
 function App() {
@@ -108,6 +110,8 @@ function App() {
           <Route path="/clientAdversePost" component={ClientAdversePost} />
 
           <Route path="/footer" component={Footer} />
+
+          <Route path="/viewAlert" component={ViewAlert} />
         </Switch>
 
       </Router>
